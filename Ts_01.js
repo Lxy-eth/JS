@@ -561,12 +561,307 @@
 //     return arg.toString().length
 // }
 // console.log(getLength(1))
-var lengths = function (arg) {
-    if (typeof arg === 'string') {
-        return arg.length;
-    }
-    else {
-        return arg.toString().length;
-    }
-};
-console.log(lengths('hello'));
+//  const lengths = (arg:number | string) => {
+//     if(typeof arg === 'string'){
+//         return arg.length
+//     }else {
+//         return arg.toString().length
+//     }
+//  }
+//  console.log(lengths('hello'))
+//类型断言
+//值 as 类型
+// function getLength(arg:number | string) :number {
+//     const str  = arg as string
+//     if(str.length) {
+//         return str.length
+//     }else {
+//         const number = arg as number 
+//         return number.toString().length;
+//     }
+// }
+//字面量类型
+// type ButtonSize = 'mini' | 'small' | "normal" | "large"
+// type Sex = '男' | '女'
+//范型
+//泛型的语法是 <> 里写类型参数，一般可以用 T 来表示。
+// function print<T>(arg:T):T{
+//     console.log(arg);
+//     return arg;
+// }
+// const res:number = print(111)
+// type Print = <T>(arg :T) => T
+// const printFn:Print = function print(arg){
+//     console.log(arg);
+//     return arg
+// }
+// interface Iprint<T> {
+//     (arg:T):T
+// }
+// function print<T>(arg:T) {
+//     console.log(arg);
+//     return arg;
+// }
+// const myPrint:Iprint<number> = print;
+//默认参数类型
+// interface Iprint<T= number>{
+//     (arg:T):T;
+// }
+// function print<T>(arg:T):T{
+//     console.log(arg);
+//     return arg
+// }
+// const myPrint :Iprint = print;
+//处理多个函数参数
+// function swap(tuple) {
+//     return [tuple[1],tuple[0]];
+// }
+// function sawp<T,U>(tuple: [T,U]) : [U ,T]{
+//     return  [tuple[1],tuple[0]];
+// }
+// const res = sawp(['lin',18]);
+// console.log(res);
+//函数副作用操作
+//比如我们有一个通用的异步请求方法，想根据不同的 url 请求返回不同类型的数据。
+// function request(url:string) {
+//     return fetch(url).then(res => res.json());
+// }
+// //调用一个获取用户信息的接口：
+// request('user/info').then(res => {
+//     console.log(res);
+// })
+// interface UserOInfo {
+//     name:string;
+//     age:number;
+// }
+// function request<T>(url:string): Promise<T> {
+//     return fetch(url).then(res => res.json())
+// }
+// request<UserOInfo>('url/info').then(res => {
+//     console.log(res.age)
+// })
+//约束泛型
+// function printLength<T>(arg:T):T{
+//     console.log(arg.length);
+//     return arg
+// }
+// interface ILength {
+//     length:number;
+// }
+// function printLength<T extends ILength>(arg:T):T{
+//     console.log(arg.length);
+//     return arg
+// }
+// const str = printLength('lan');
+// const arr = printLength([1,2,3]);
+// const obj = printLength({length:10});
+//范型约束类
+// class Stack<T> {
+//     private data: T[] = [];
+//     push(item:T) {
+//         return this.data.push(item);
+//     }
+//     pop() : T | undefined {
+//         return this.data.pop()
+//     }
+// }
+// const s1 = new Stack<number>();
+// s1.push(1);
+//泛型约束接口
+// interface IkeyValue<T,U> {
+//     key:T;
+//     value:U
+// }
+// const k1:IkeyValue<number,string> = {key : 18 , value : 'lan'};
+// const k2:IkeyValue<string,number> = {key:'lan',value : 18};
+// //泛型定义数组
+// const arr:number[] = [1,2,3];
+// interface Arr<T> {
+//     arr:T
+// }
+// const arr1: Arr<number> = {arr:1};
+// const arr2:Array<number> = [1,2,3];
+//索引类型
+//从对象中抽取一些属性的值，然后拼接成数组
+// const userInfo = {
+//     name:'lan',
+//     age:'18',
+//     sex:'女'
+// }
+// function getValue(userInfo:any,keys:string[]){
+//     return keys.map(key => userInfo[key])
+// }
+// console.log(getValue(userInfo,['name','age']));
+// console.log(getValue(userInfo,['sex','outlook']));
+// interface IPerson {
+//     name:string;
+//     age:number
+// }
+// type Test = keyof IPerson[]
+// console.log(typeof('Test'))
+// let type1 : IPerson['name'];
+// let type2 : IPerson['age'];
+//extends(泛型约束)
+//T extends U ,表示泛型变量可以通过继承某个类型，获得某些属性
+// interface ILength {
+//     length: number
+// }
+// function printLength<T extends ILength>(arg:T):T{
+//     console.log(arg.length);
+//     return arg;
+// }
+//映射类型
+// type Person = "name" | 'school' | "major";
+// type Obj = {
+//     [p in Person]:string;
+// }
+// //partial
+// interface IPerson {
+//     name:string;
+//     age:number
+// }
+// let p1:IPerson = {
+//     name:'lan',
+//     age : 18
+// }
+// type IPartial = Partial<IPerson>;
+// let p1:IPartial = {}
+//Partial 的实现用到了 in 和 keyof
+// type Partials<T> = {
+//     [P in keyof T]?: T[P]
+// }
+//[P in keyof T] 遍历T上的所有的属性
+//?: 设置属性为可选的
+//T[P] 设置类型为原来的类型
+//Readonly
+//Readonly<T> 将T 的所有的属性映射为只读的
+// interface IPerson {
+//     name: string;
+//     age: number;
+// }
+// type IReadOnly = Readonly<IPerson>
+// let p1 : IReadOnly = {
+//     name:'lan',
+//     age:18
+// }
+//Pick
+//pick用于抽象子集，挑选一组属性并且组成一个新的了类型
+// interface IPerson {
+//     name:string,
+//     age:number;
+//     sex:string;
+// }
+// type IPick = Pick<IPerson,'name' | 'age'>
+// let p1: IPick = {
+//     name:'lan',
+//     age:18
+// }
+//Record 创建新属性的非同态映射类型
+// interface IPerson{
+//     name:string;
+//     age:number;
+// }
+// type IRecord = Record<string,IPerson>;
+// let personMap:IRecord = {
+//     person1 : {
+//         name:'lan',
+//         age:18,
+//     },
+//     person2:{
+//         name:'lan',
+//         age:18
+//     }
+// }
+//ES6
+//let 变量不能重复声明
+//块集作用域
+// {
+//     let g ="123"
+// }
+// console.log(g)
+//不存在变量提升
+// let  song='nihao';
+// console.log(song)
+//不影响作用域
+// {
+//     let school = "nihao";
+//     function fn()
+// } 
+// let a = 1;
+// let b = 2;
+// let c = 3;
+//let [a,b,c] = [1,2,3];
+// var a ;
+// a = 10;
+// console.log(a);
+//let 变量的提升
+//2/是一个块的作用域
+// if(1===1){
+//     let b =10
+//     console.log(b)
+// }
+//3.let不能重复声明
+//const 声明常量，无法修改
+//const max = 30;
+// const Person = {
+//     name : 'nohao',
+// }
+// Person.name ="a";
+//不会污染全局的变量
+//模版字符串
+// let id :number = 10;
+// let name1 :string = "lan"
+// let person :string=`你好: ${id} ${name1}`;
+// console.log(person);
+//带参数的默认值的函数
+// function add(a=10,b=20):number {
+//     return a + b
+// }
+// console.log(add());
+//默认的表达式也可以是一个函数
+// function add(a:number, b =getVal(5)) {
+//     return a + b;
+// }
+// function getVal(val) {
+//     return val +5;
+// }
+// add(10);
+// console.log(add(10))
+//es6中的剩于参数
+// function pick(obj,...keys) {
+//     // console.log(keys);
+//     let result = Object.create(null);
+//     for(let i = 0; i < keys.length; i++) {
+//         result[keys[i]] = obj[keys[i]];
+//     }
+//     return result;
+// }
+// let book = {
+//     title: 'es6',
+//     auther:'lan',
+//     year:2022,
+// }
+// let bookData = pick(book,'title','year','auther');
+// console.log(bookData);
+//扩展运算符
+//剩余运算符把多个独立的合并到一个数组中
+//扩展运算符经数组分割
+// const maxnum = Math.max(20,30);
+// //处理数组中的最大值
+// const arr1 :number[] = [1,2,3,23,324];
+// // console.log(Math.max.apply(null,arr1));
+// console.log(Math.max(...arr1));
+//es6 的箭头函数
+//=> 来定义 function(){} 等于 ()=>{}
+// let add = function (a,b) {
+//     return a + b;
+// }
+// console.log(add(10,20));
+// let add1 = (a:number,b:number) :number=>{
+//     return a + b
+// }
+// let add2 = (val:number) => val;
+// console.log(add1(10,20));
+var getObj = function (id) { return ({ id: id, name: 'lan' }); };
+var obj = getObj(20);
+console.log(obj);
